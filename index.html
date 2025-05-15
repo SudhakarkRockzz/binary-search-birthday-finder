@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Binary Search Birthday Finder</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Binary Search Birthday Finder</h1>
+        
+        <div class="instructions">
+            <p>Think of a date in any month (1-31). I'll try to guess it by asking you questions.</p>
+            <p>Answer with "Yes", "No", or "Correct".</p>
+        </div>
+        
+        <div class="question" id="question">Ready to start?</div>
+        
+        <div style="text-align: center;">
+            <button id="startBtn">Start Game</button>
+            <button id="yesBtn" disabled>Yes</button>
+            <button id="noBtn" disabled>No</button>
+            <button id="correctBtn" disabled>Correct</button>
+        </div>
+        
+        <div id="result"></div>
+        
+        <div class="binary-steps" id="steps">
+            <p>Binary search steps will appear here:</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
