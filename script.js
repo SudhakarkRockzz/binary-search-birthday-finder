@@ -1,115 +1,102 @@
-let low = 1;
-let high = 31;
+let min = 1;
+let max = 31;
 let guess;
-let steps = 0;
-let stepHistory = [];
+let attempts = 0;
 
-const questionEl = document.getElementById('question');
-const resultEl = document.getElementById('result');
-const stepsEl = document.getElementById('steps');
-const startBtn = document.getElementById('startBtn');
-const yesBtn = document.getElementById('yesBtn');
-const noBtn = document.getElementById('noBtn');
-const correctBtn = document.getElementById('correctBtn');
+const startBtn = document.getElementById('start');
+const yesBtn = document.getElementById('yes');
+const noBtn = document.getElementById('no');
+const resultDiv = document.getElementById('result');
+const controlsDiv = document.getElementById('controls');
+const canvas = document.getElementById('background-canvas');
+const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const birthdayImageContainer = document.getElementById('birthday-image-container');
+const birthdayImage = document.getElementById('birthday-image');
 
-function initGame() {
-    low = 1;
-    high = 31;
-    steps = 0;
-    stepHistory = [];
-    updateStepsDisplay();
+// 3D scene setup
+renderer.setClearColor(0xf0f0f0);
+camera.position.z = 5;
 
-    startBtn.disabled = true;
-    yesBtn.disabled = false;
-    noBtn.disabled = false;
-    correctBtn.disabled = false;
+// Create a simple cube for the background animation
+const geometry = new THREE.BoxGeometry(1, 1, 1);
+const material = new THREE.MeshBasicMaterial({ color: 0x3498db, wireframe: true });
+const cube = new THREE.Mesh(geometry, material);
+scene.add(cube);
 
+// Function to handle window resize
+function resizeCanvas() {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+}
+
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+// Animation loop
+function animate() {
+    requestAnimationFrame(animate);
+
+    cube.rotation.x += 0.01;
+    cube.rotation.y += 0.01;
+
+    renderer.render(scene, camera);
+}
+animate();
+
+startBtn.addEventListener('click', startGame);
+yesBtn.addEventListener('click', () => makeGuess('yes'));
+noBtn.addEventListener('click', () => makeGuess('no'));
+
+function startGame() {
+    min = 1;
+    max = 31;
+    attempts = 0;
+    startBtn.style.display = 'none';
+    controlsDiv.style.display = 'block';
+    birthdayImageContainer.style.display = 'none';
     makeGuess();
 }
 
-function makeGuess() {
-    guess = Math.floor((low + high) / 2);
-    steps++;
+function makeGuess(response) {
+    if (response === 'yes') {
+        min = guess + 1;
+    } else if (response === 'no') {
+        max = guess - 1;
+    }
 
-    stepHistory.push({
-        step: steps,
-        low: low,
-        high: high,
-        guess: guess
-    });
+    if (min === max) {
+        resultDiv.innerHTML = `Happy Birthday! Your birthday must be on the ${min}${getOrdinal(min)}!<br>Found in ${attempts} guesses.`;
+        controlsDiv.style.display = 'none';
+        startBtn.style.display = 'inline-block';
+        birthdayImage.src = "https://i.pinimg.com/originals/aa/fd/60/aafd603dfb06c7d547a7edd8f8d8d6e0.gif";
+        birthdayImageContainer.style.display = 'block';
+        startBtn.textContent = 'Play Again';
+        return;
+    }
 
-    updateStepsDisplay();
-    questionEl.textContent = `Is your birthday before the ${guess}${getOrdinalSuffix(guess)} of the month?`;
+    if (min > max) {
+        resultDiv.textContent = "Hmm, something's wrong. Did you change your number?";
+        controlsDiv.style.display = 'none';
+        startBtn.style.display = 'inline-block';
+        startBtn.textContent = 'Try Again';
+        return;
+    }
+
+    guess = Math.floor((min + max) / 2);
+    attempts++;
+    resultDiv.textContent = `Is your birthday after the ${guess}${getOrdinal(guess)}?`;
 }
 
-function getOrdinalSuffix(num) {
-    const j = num % 10;
-    const k = num % 100;
-    if (j === 1 && k !== 11) return 'st';
-    if (j === 2 && k !== 12) return 'nd';
-    if (j === 3 && k !== 13) return 'rd';
-    return 'th';
-}
-
-function updateStepsDisplay() {
-    let html = '<h3>Binary Search Steps</h3>';
-    if (stepHistory.length === 0) {
-        html += '<p>No steps yet.</p>';
-    } else {
-        stepHistory.forEach(step => {
-            html += `
-                <div class="step">
-                    Step ${step.step}: Low=${step.low}, High=${step.high} → Guess=${step.guess}
-                </div>
-            `;
-        });
+function getOrdinal(n) {
+    if (n > 3 && n < 21) return 'th';
+    switch (n % 10) {
+        case 1: return 'st';
+        case 2: return 'nd';
+        case 3: return 'rd';
+        default: return 'th';
     }
-    stepsEl.innerHTML = html;
-}
-
-startBtn.addEventListener('click', initGame);
-
-yesBtn.addEventListener('click', () => {
-    // Yes = Earlier
-    if (guess <= low) {
-        resultEl.textContent = "Hmm, that doesn't make sense. Did you answer correctly?";
-        endGame();
-        return;
-    }
-    high = guess - 1;
-    if (low > high) {
-        resultEl.textContent = "I think you might have made a mistake in your answers.";
-        endGame();
-        return;
-    }
-    makeGuess();
-});
-
-noBtn.addEventListener('click', () => {
-    // No = Later
-    if (guess >= high) {
-        resultEl.textContent = "Hmm, that doesn't make sense. Did you answer correctly?";
-        endGame();
-        return;
-    }
-    low = guess + 1;
-    if (low > high) {
-        resultEl.textContent = "I think you might have made a mistake in your answers.";
-        endGame();
-        return;
-    }
-    makeGuess();
-});
-
-correctBtn.addEventListener('click', () => {
-    resultEl.textContent = `Great! I found your birthday in ${steps} steps. It's the ${guess}${getOrdinalSuffix(guess)}.`;
-    endGame();
-});
-
-function endGame() {
-    yesBtn.disabled = true;
-    noBtn.disabled = true;
-    correctBtn.disabled = true;
-    startBtn.disabled = false;
 }
 

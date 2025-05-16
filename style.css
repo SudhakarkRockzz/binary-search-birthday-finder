@@ -1,59 +1,107 @@
 body {
-    font-family: Arial, sans-serif;
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #f5f5f5;
-}
-.container {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-h1 {
-    color: #333;
+    font-family: 'Inter', sans-serif;
     text-align: center;
+    margin: 0;
+    overflow: hidden;
+    background-color: #f0f0f0;
 }
-.instructions {
-    margin-bottom: 20px;
-    padding: 10px;
-    background-color: #e6f7ff;
-    border-radius: 4px;
+#game {
+    width: 90%;
+    max-width: 400px;
+    margin: 120px auto;
+    padding: 30px;
+    border-radius: 16px;
+    background-color: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
+    position: relative;
+    z-index: 1;
 }
-.question {
+h2 {
+    color: #2c3e50;
+    margin-bottom: 24px;
+    font-weight: 600;
+    font-size: 28px;
+}
+p {
+    color: #555;
+    margin-bottom: 30px;
+    line-height: 1.7;
     font-size: 18px;
-    margin: 20px 0;
-    font-weight: bold;
 }
 button {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    margin: 5px;
-    border-radius: 4px;
+    padding: 14px 28px;
+    margin: 12px;
     cursor: pointer;
-    font-size: 16px;
+    border-radius: 10px;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    font-size: 18px;
+    border: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    font-weight: 600;
 }
 button:hover {
+    transform: scale(1.04);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+}
+button:active {
+    transform: scale(1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+}
+#yes {
+    background-color: #4CAF50;
+    color: white;
+}
+#yes:hover {
     background-color: #45a049;
 }
+#no {
+    background-color: #f44336;
+    color: white;
+}
+#no:hover {
+    background-color: #d32f2f;
+}
+#start {
+    background-color: #ff9800;
+    color: white;
+}
+#start:hover {
+    background-color: #e65100;
+}
 #result {
-    margin-top: 20px;
-    padding: 10px;
-    font-size: 18px;
     font-weight: bold;
-    text-align: center;
-    min-height: 50px;
+    margin: 30px 0;
+    font-size: 22px;
+    color: #3498db;
 }
-.binary-steps {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #f9f9f9;
-    border-radius: 4px;
+#controls {
+    display: none;
+    margin-top: 15px;
 }
-.step {
-    margin-bottom: 5px;
+#background-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+#birthday-image-container {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+#birthday-image-container img {
+    max-width: 80vw;
+    max-height: 80vh;
+    border-radius: 5px;
 }
 
