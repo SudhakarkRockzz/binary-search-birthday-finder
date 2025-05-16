@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Birthday Cake Guessing Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="game-container">
+        <h2>🎂 Birthday Cake Guesser 🎂</h2>
+        <div id="name-input-container">
+            <input type="text" id="name-input" placeholder="Enter your name">
+            <button id="name-submit-btn">Start Game</button>
+            <img id="birthday-image" src="/home/sudhakar/giphy (1).gif" alt="Birthday Cake">
+        </div>
+        <p>Think of a date (1-31) and I'll guess it!</p>
+
+        <div id="date-display">?</div>
+        <div id="question">Ready to play?</div>
+
+        <div class="calendar" id="calendar"></div>
+
+        <div id="game-controls" style="display:none;">
+            <div id="question">Is your date higher or lower?</div>
+            <div class="btn-container">
+                <button id="no-btn" class="btn">No</button>
+                <button id="yes-btn" class="btn">Yes</button>
+            </div>
+        </div>
+
+        <div id="attempts"></div>
+        <button id="start-btn" class="btn" style="display:none;">Start Game</button>
+
+        <div id="cake" style="display:none;">
+            <div class="cake-body" style="width: 120px; height: 60px; background: linear-gradient(to bottom, #f9c5d1, #f2789f); border-radius: 10px 10px 0 0; position: relative;">
+                <div class="candle"></div>
+                <div class="flame"></div>
+            </div>
+            <div class="cake-base" style="width: 150px; height: 30px; background: linear-gradient(to bottom, #f2789f, #e64980); border-radius: 0 0 20px 20px;"></div>
+        </div>
+        <div class="shooting-star"></div>
+        <div class="shooting-star"></div>
+        <div class="shooting-star"></div>
+        <div class="shooting-star"></div>
+        <div class="shooting-star"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
