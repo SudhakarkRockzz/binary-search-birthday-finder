@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Birthday Cake Guessing Game</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            background-color: #000046; /* Changed background color to dark blue */
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: url('/home/sudhakar/istockphoto-165966456-612x612.jpg'); /* Added shooting stars image */
+            background-size: cover;
+            background-position: center;
+            overflow: hidden; /* Prevent scrollbars for animation */
+        }
+
+        #game-container {
+            width: 400px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.5s;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #ffffff, #f1f3f5);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), 0 15px 50px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #d35400;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            font-size: 28px;
+            margin-bottom: 10px;
+            animation: fadeIn 1s ease, pulse 2s infinite alternate;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes pulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.05); }
+        }
+
+        p {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            animation: slideIn 1s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        #date-display {
+            font-size: 80px;
+            font-weight: bold;
+            color: #e74c3c;
+            margin: 30px 0;
+            text-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+            transform: rotateX(20deg);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: zoomIn 1s ease, rotateScale 2s infinite alternate;
+        }
+
+        @keyframes zoomIn {
+            from { transform: rotateX(20deg) scale(0.8); opacity: 0; }
+            to { transform: rotateX(20deg) scale(1); opacity: 1; }
+        }
+
+        @keyframes rotateScale {
+            from { transform: rotateX(20deg) scale(1); }
+            to { transform: rotateX(20deg) scale(1.1); }
+        }
+
+        #question {
+            font-size: 20px;
+            margin: 20px 0;
+            color: #34495e;
+            animation: fadeIn 1s ease, typeWriter 4s steps(40) infinite alternate;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        @keyframes typeWriter {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            transform-style: preserve-3d;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            animation: buttonPulse 2s infinite alternate;
+        }
+
+        @keyframes buttonPulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
+        }
+
+        .btn:hover {
+            transform: translateY(-3px) rotateX(10deg) scale(1.2);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            animation: none;
+        }
+
+        .btn:active {
+            transform: translateY(1px) scale(0.9);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            animation: none;
+        }
+
+        #yes-btn {
+            background: #2ecc71;
+            color: white;
+        }
+
+        #no-btn {
+            background: #e74c3c;
+            color: white;
+        }
+
+        #start-btn {
+            background: #3498db;
+            color: white;
+            padding: 15px 40px;
+            font-size: 20px;
+            animation: fadeIn 1s ease, pulse 2s infinite alternate;
+        }
+
+        #attempts {
+            margin-top: 30px;
+            font-style: italic;
+            color: #7f8c8d;
+            font-size: 16px;
+            animation: slideIn 1s ease, fadeIn 1s ease;
+        }
+
+        .flip-animation {
+            animation: flip 0.6s cubic-bezier(0.455, 0.03, 0.515, 0.955) both;
+        }
+
+        @keyframes flip {
+            0% { transform: rotateX(0); }
+            50% { transform: rotateX(90deg); }
+            100% { transform: rotateX(0); }
+        }
+
+        /* Cake Styles */
+        #cake {
+            display: none;
+            position: absolute;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            animation: cakeRise 1s forwards 0.5s, fadeIn 1s ease;
+        }
+
+        @keyframes cakeRise {
+            0% { bottom: -100px; }
+            100% { bottom: 20px; }
+        }
+
+        .candle {
+            position: absolute;
+            width: 6px;
+            height: 30px;
+            background: linear-gradient(to bottom, #fff, #f1c40f);
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: flicker 0.5s infinite alternate, fadeIn 1s ease;
+        }
+
+        .flame {
+            position: absolute;
+            width: 10px;
+            height: 15px;
+            background: linear-gradient(to bottom, #f39c12, #e74c3c);
+            border-radius: 50% 50% 20% 20%;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: flicker 0.5s infinite alternate, pulseFlame 0.5s infinite alternate, fadeIn 1s ease;
+            box-shadow: 0 0 20px #f39c12;
+        }
+
+        @keyframes flicker {
+            0% { transform: translateX(-50%) scale(1); opacity: 1; }
+            100% { transform: translateX(-50%) scale(1.1) rotate(5deg); opacity: 0.8; }
+        }
+
+        @keyframes pulseFlame {
+            from { transform: translateX(-50%) scale(1); }
+            to { transform: translateX(-50%) scale(1.2); }
+        }
+
+        /* Calendar Styles */
+        .calendar {
+            display: inline-grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin: 20px 0;
+            background: #fff;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            animation: slideIn 1s ease;
+        }
+
+        .day-cell {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s, transform 0.2s;
+        }
+
+        .day-cell:hover {
+            transform: scale(1.2);
+            background-color: #ffe082;
+        }
+
+        .day-cell.guessed {
+            background: #e74c3c;
+            color: white;
+            transform: scale(1.3);
+            animation: pulseGuessed 1s infinite alternate;
+        }
+
+        @keyframes pulseGuessed {
+            from { transform: scale(1.3); }
+            to { transform: scale(1.5); }
+        }
+
+        .day-cell.current {
+            background: #3498db;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 0 0 2px white, 0 0 0 4px #3498db;
+            animation: pulseCurrent 1s infinite alternate;
+        }
+
+        @keyframes pulseCurrent {
+            from { transform: scale(1); }
+            to { transform: scale(1.2); }
+        }
+
+        /* Confetti */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            border-radius: 50%;
+            animation: confetti 3s ease-in-out forwards;
+        }
+
+        @keyframes confetti {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(500px) rotate(720deg); opacity: 0; }
+        }
+
+        #name-input-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+            animation: fadeIn 1s ease;
+        }
+
+        #name-input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 80%;
+            max-width: 300px;
+            margin-bottom: 10px;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            transition: all 0.3s;
+            animation: slideIn 1s ease;
+        }
+
+        #name-input:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+        }
+
+        #name-submit-btn {
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            transition: background-color 0.3s, transform 0.3s;
+            animation: pulseButton 2s infinite alternate;
+        }
+
+        @keyframes pulseButton {
+            from { transform: scale(1); }
+            to { transform: scale(1.05); }
+        }
+
+        #name-submit-btn:hover {
+            background-color: #2980b9;
+            transform: scale(1.1);
+            animation: none;
+        }
+
+        #name-submit-btn:active {
+            background-color: #217dbb;
+            transform: scale(0.95);
+            animation: none;
+        }
+
+        #birthday-image {
+            width: 100px;
+            height: auto;
+            margin-top: 10px;
+            display: none;
+            animation: fadeIn 1s ease, slideIn 1s ease;
+        }
+
+        /* Shooting Star Animation */
+        @keyframes shootingStar {
+            0% {
+                transform: translateX(0) translateY(0) rotate(45deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            30% {
+                transform: translateX(300px) translateY(-300px) rotate(45deg);
+                opacity: 0.5;
+            }
+            100% {
+                transform: translateX(600px) translateY(-600px) rotate(45deg);
+                opacity: 0;
+            }
+        }
+
+        .shooting-star {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 2px;
+            height: 80px;
+            background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0));
+            transform-origin: 0 0;
+            animation: shootingStar 2s linear infinite;
+            opacity: 0;
+        }
+
+        .shooting-star:nth-child(1) {
+            top: 10%;
+            left: 20%;
+            animation-delay: 0s;
+        }
+        .shooting-star:nth-child(2) {
+            top: 30%;
+            left: 40%;
+            animation-delay: 1s;
+        }
+        .shooting-star:nth-child(3) {
+            top: 50%;
+            left: 10%;
+            animation-delay: 2s;
+        }
+        .shooting-star:nth-child(4) {
+            top: 70%;
+            left: 30%;
+            animation-delay: 0.5s;
+        }
+        .shooting-star:nth-child(5) {
+            top: 80%;
+            left: 60%;
+            animation-delay: 1.5s;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <h2>🎂 Birthday Cake Guesser 🎂</h2>
+        <div id="name-input-container">
+            <input type="text" id="name-input" placeholder="Enter your name">
+            <button id="name-submit-btn">Start Game</button>
+            <img id="birthday-image" src="/home/sudhakar/giphy (1).gif" alt="Birthday Cake">
+        </div>
+        <p>Think of a date (1-31) and I'll guess it!</p>
+
+        <div id="date-display">?</div>
+        <div id="question">Ready to play?</div>
+
+        <div class="calendar" id="calendar">
+            </div>
+
+        <div id="game-controls" style="display:none;">
+            <div id="question">Is your date higher or lower?</div>
+            <div class="btn-container">
+                <button id="no-btn" class="btn">No</button>
+                <button id="yes-btn" class="btn">Yes</button>
+            </div>
+        </div>
+
+        <div id="attempts"></div>
+        <button id="start-btn" class="btn" style="display:none;">Start Game</button>
+
+        <div id="cake" style="display:none;">
+            <div class="cake-body" style="width: 120px; height: 60px; background: linear-gradient(to bottom, #f9c5d1, #f2789f); border-radius: 10px 10px 0 0; position: relative;">
+                <div class="candle"></div>
+                <div class="flame"></div>
+            </div>
+            <div class="cake-base" style="width: 150px; height: 30px; background: linear-gradient(to bottom, #f2789f, #e64980); border-radius: 0 0 20px 20px;"></div>
+        </div>
+         <div class="shooting-star"></div>
+        <div class="shooting-star"></div>
+        <div class="shooting-star"></div>
+        <div class="shooting-star"></div>
+        <div class="shooting-star"></div>
+    </div>
+
+    <script>
+        // Game elements
+        const startBtn = document.getElementById('start-btn');
+        const gameControls = document.getElementById('game-controls');
+        const questionDiv = document.getElementById('question');
+        const dateDisplay = document.getElementById('date-display');
+        const attemptsDiv = document.getElementById('attempts');
+        const yesBtn = document.getElementById('yes-btn');
+        const noBtn = document.getElementById('no-btn');
+        const gameContainer = document.getElementById('game-container');
+        const calendar = document.getElementById('calendar');
+        const cake = document.getElementById('cake');
+        const nameInputContainer = document.getElementById('name-input-container');
+        const nameInput = document.getElementById('name-input');
+        const nameSubmitBtn = document.getElementById('name-submit-btn');
+        const birthdayImage = document.getElementById('birthday-image');
+
+        // Game variables
+        let min = 1;
+        let max = 31;
+        let currentGuess;
+        let attempts = 0;
+        let guessedDates = [];
+        let userName = "";
+
+        // Event listeners
+        // startBtn.addEventListener('click', startGame);  Removed this.  The button is hidden initially.
+        yesBtn.addEventListener('click', () => handleResponse('yes'));
+        noBtn.addEventListener('click', () => handleResponse('no'));
+        nameSubmitBtn.addEventListener('click', () => {
+            userName = nameInput.value.trim();
+            if (userName !== "") {
+                nameInputContainer.style.display = 'none';
+                startGame();
+            } else {
+                alert("Please enter your name before starting the game.");
+            }
+        });
+
+        // Initialize calendar
+        function initCalendar() {
+            calendar.innerHTML = '';
+            for (let i = 1; i <= 31; i++) {
+                const dayCell = document.createElement('div');
+                dayCell.className = 'day-cell';
+                dayCell.textContent = i;
+                dayCell.id = `day-${i}`;
+                calendar.appendChild(dayCell);
+            }
+        }
+
+        function startGame() {
+            // Reset game state
+            min = 1;
+            max = 31;
+            attempts = 0;
+            guessedDates = [];
+            cake.style.display = 'none';
+            birthdayImage.style.display = 'none';
+
+            // Initialize calendar
+            initCalendar();
+
+            // UI updates
+            startBtn.style.display = 'none';  // Keep this hidden
+            gameControls.style.display = 'block';
+            attemptsDiv.textContent = '';
+
+            // Make first guess
+            makeGuess();
+        }
+
+        function makeGuess() {
+            // Calculate new guess (middle of current range)
+            currentGuess = Math.floor((min + max) / 2);
+            attempts++;
+            guessedDates.push(currentGuess);
+
+            // Update calendar display
+            updateCalendar();
+
+            // Add flip animation
+            dateDisplay.classList.add('flip-animation');
+            setTimeout(() => {
+                dateDisplay.textContent = currentGuess;
+                dateDisplay.classList.remove('flip-animation');
+            }, 300);
+
+            // Update UI
+            attemptsDiv.textContent = `Attempt ${attempts}`;
+
+            // 3D tilt effect
+            gameContainer.style.transform = `rotateX(${attempts * 2}deg) rotateY(${attempts * 1}deg)`;
+
+            // Check if we've narrowed it down to one number
+            if (min === max) {
+                endGame(true);
+            }
+        }
+
+        function updateCalendar() {
+            // Reset all cells
+            document.querySelectorAll('.day-cell').forEach(cell => {
+                cell.classList.remove('current', 'guessed');
+            });
+
+            // Mark guessed dates
+            guessedDates.forEach(date => {
+                const cell = document.getElementById(`day-${date}`);
+                if (cell) cell.classList.add('guessed');
+            });
+
+            // Highlight current guess
+            const currentCell = document.getElementById(`day-${currentGuess}`);
+            if (currentCell) currentCell.classList.add('current');
+        }
+
+        function handleResponse(response) {
+            if (response === 'yes') {
+                min = currentGuess + 1;
+            } else {
+                max = currentGuess - 1;
+            }
+
+            // Check for inconsistencies
+            if (min > max) {
+                endGame(false);
+                return;
+            }
+
+            makeGuess();
+        }
+
+        function endGame(success) {
+            if (success) {
+                dateDisplay.classList.add('bounce-animation');
+                questionDiv.textContent = `Happy Birthday, ${userName}!`;
+                attemptsDiv.textContent = `Found your date in ${attempts} guesses!`;
+                showCake();
+                createConfetti();
+                birthdayImage.style.display = 'block';
+            } else {
+                questionDiv.textContent = "Wait, that can't be right...";
+                attemptsDiv.textContent = "Did you change your number?";
+            }
+
+            gameControls.style.display = 'none';
+            startBtn.style.display = 'inline-block';
+            startBtn.textContent = 'Play Again';
+
+            // Reset 3D tilt
+            setTimeout(() => {
+                gameContainer.style.transform = 'none';
+            }, 1000);
+        }
+
+        function showCake() {
+            cake.style.display = 'block';
+        }
+
+        function createConfetti() {
+            const colors = ['#e74c3c', '#2ecc71', '#3498db', '#f1c40f', '#9b59b6'];
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDuration = `${Math.random() * 2 + 1}s`;
+                document.body.appendChild(confetti);
+
+                // Remove confetti after animation
+                setTimeout(() => {
+                    confetti.remove();
+                }, 3000);
+            }
+        }
+    </script>
+</body>
+</html>
+
